@@ -1,6 +1,7 @@
 package com.example.codesharingplatform.services;
 
 import com.example.codesharingplatform.entities.CodeSnippet;
+import com.example.codesharingplatform.exceptions.CodeSnippetNotFoundException;
 import com.example.codesharingplatform.repositories.CodeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,7 @@ public class CodeSnippetService {
                 .filter(x -> x.getUuid().equals(UUID))
                 .findFirst()
                 .orElse(null);
-        if (codeSnippet == null) return null;
+        if (codeSnippet == null) throw new CodeSnippetNotFoundException();
         else {
             if (codeSnippet.isTimeRestricted() && codeSnippet.isViewsRestricted()) {
                 return validateBoth(codeSnippet);
@@ -63,7 +64,7 @@ public class CodeSnippetService {
             return codeSnippet;
         } else {
             codeRepository.delete(codeSnippet);
-            return null;
+            throw new CodeSnippetNotFoundException();
         }
     }
 
@@ -75,7 +76,7 @@ public class CodeSnippetService {
             return codeSnippet;
         } else {
             codeRepository.delete(codeSnippet);
-            return null;
+            throw new CodeSnippetNotFoundException();
         }
     }
 

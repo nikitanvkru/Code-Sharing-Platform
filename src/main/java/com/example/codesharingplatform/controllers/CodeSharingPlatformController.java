@@ -27,11 +27,11 @@ public class CodeSharingPlatformController {
 
 
     /**
-     * API name: Get quiz by id
-     * HTTP method: Get
+     * API name: Post new code snippet
+     * HTTP method: Post
      *
-     * @return quiz obj from given id
-     * @path api/quizzes/{id}
+     * @return ResponseEntity
+     * @path /api/code/new
      */
     @PostMapping(value = "/api/code/new", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -43,13 +43,27 @@ public class CodeSharingPlatformController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-
+    /**
+     * API name: Return json obj of snippet
+     * HTTP method: Get
+     *
+     * @return CodeSnippet
+     * @path /api/code/{UUID}
+     */
     @GetMapping("/api/code/{UUID}")
     @ResponseBody
     public CodeSnippet getCode(@PathVariable String UUID) {
         return codeSnippetService.getCodeSnippetById(UUID);
     }
 
+
+    /**
+     * API name: Return json list with latest uploaded quizzes
+     * HTTP method: Get
+     *
+     * @return ResponseEntity
+     * @path /api/code/latest
+     */
     @GetMapping("/api/code/latest")
     @ResponseBody
     public ResponseEntity<List<CodeSnippet>> getRecentlyCreatedCodes() {
@@ -57,6 +71,14 @@ public class CodeSharingPlatformController {
         return new ResponseEntity<>(recentCodeSnippets, HttpStatus.OK);
     }
 
+
+    /**
+     * API name: View for create code
+     * HTTP method: Get
+     *
+     * @return ModelAndView
+     * @path /code/new
+     */
     @GetMapping("/code/new")
     public ModelAndView getCodeCreationPage(HttpServletResponse response) {
         response.addHeader(CONTENT_TYPE, TEXT_HTML);
@@ -67,6 +89,13 @@ public class CodeSharingPlatformController {
         return view;
     }
 
+    /**
+     * API name: View with code snippet
+     * HTTP method: Get
+     *
+     * @return ModelAndView
+     * @path /code/{UUID}
+     */
     @GetMapping("/code/{UUID}")
     public ModelAndView getCodePageById(HttpServletResponse response, @PathVariable String UUID) {
         response.addHeader(CONTENT_TYPE, TEXT_HTML);
@@ -74,7 +103,7 @@ public class CodeSharingPlatformController {
         CodeSnippet codeSnippet = codeSnippetService.getCodeSnippetById(UUID);
         ModelAndView model = new ModelAndView();
         if (codeSnippet == null) {
-            model.setViewName("error");
+            model.setViewName("createCode");
         } else {
             model.addObject("codeSnippet", codeSnippet);
             model.setViewName("code");
@@ -83,6 +112,13 @@ public class CodeSharingPlatformController {
 
     }
 
+    /**
+     * API name: View with the latest code snippets
+     * HTTP method: Get
+     *
+     * @return ModelAndView
+     * @path /code/latest
+     */
     @GetMapping("/code/latest")
     public ModelAndView getRecentCodesPage(HttpServletResponse response) {
         response.addHeader(CONTENT_TYPE, TEXT_HTML);
